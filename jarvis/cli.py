@@ -107,11 +107,32 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command")
 
     demo = subparsers.add_parser("demo", help="Run the built-in automation demo.")
-    demo.add_argument("--event-name", default=argparse.SUPPRESS)
-    demo.add_argument("--event-source", default=argparse.SUPPRESS)
-    demo.add_argument("--rule-name", default=argparse.SUPPRESS)
-    demo.add_argument("--action-command", default=argparse.SUPPRESS)
-    demo.add_argument("--payload", type=_parse_payload, default=argparse.SUPPRESS)
+    demo.add_argument(
+        "--event-name",
+        default=argparse.SUPPRESS,
+        help="Event name to publish.",
+    )
+    demo.add_argument(
+        "--event-source",
+        default=argparse.SUPPRESS,
+        help="Source label for the event.",
+    )
+    demo.add_argument(
+        "--rule-name",
+        default=argparse.SUPPRESS,
+        help="Automation rule name to register.",
+    )
+    demo.add_argument(
+        "--action-command",
+        default=argparse.SUPPRESS,
+        help="Command to execute when the demo event matches.",
+    )
+    demo.add_argument(
+        "--payload",
+        type=_parse_payload,
+        default=argparse.SUPPRESS,
+        help="Optional JSON object payload.",
+    )
     demo.set_defaults(handler=_run_demo)
 
     run_command = subparsers.add_parser("command", help="Run a command via policy.")
@@ -125,11 +146,20 @@ def build_parser() -> argparse.ArgumentParser:
     event = subparsers.add_parser(
         "event", help="Publish an event (optionally with an inline rule)."
     )
-    event.add_argument("--event-name", required=True)
-    event.add_argument("--event-source", default="cli")
-    event.add_argument("--rule-name", default="cli-rule")
-    event.add_argument("--action-command")
-    event.add_argument("--payload", type=_parse_payload, default={})
+    event.add_argument("--event-name", required=True, help="Event name to publish.")
+    event.add_argument(
+        "--event-source", default="cli", help="Source label for the event."
+    )
+    event.add_argument(
+        "--rule-name", default="cli-rule", help="Automation rule name to register."
+    )
+    event.add_argument(
+        "--action-command",
+        help="Optional command to execute when the event matches.",
+    )
+    event.add_argument(
+        "--payload", type=_parse_payload, default={}, help="Optional JSON object payload."
+    )
     event.set_defaults(handler=_run_event)
 
     return parser
