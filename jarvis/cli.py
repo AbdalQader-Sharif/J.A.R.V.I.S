@@ -104,7 +104,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Run Jarvis automation demos, commands, and events.",
     )
-    subparsers = parser.add_subparsers(dest="command")
+    subparsers = parser.add_subparsers(dest="command", required=False)
 
     demo = subparsers.add_parser("demo", help="Run the built-in automation demo.")
     demo.add_argument(
@@ -172,6 +172,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         argv = ["demo"]
     parser = build_parser()
     args = parser.parse_args(list(argv))
+    if not hasattr(args, "handler"):
+        parser.print_help()
+        return 2
     return args.handler(args)
 
 
