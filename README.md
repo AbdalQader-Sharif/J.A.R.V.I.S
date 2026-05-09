@@ -22,6 +22,11 @@ This repository is now structured to grow into a production J.A.R.V.I.S. system 
 5. Desktop/Web/Mobile UI shell.
 6. Security and policy service (RBAC, audit logs, encrypted state).
 
+## Documentation
+
+- [Architecture, contracts, and service roadmaps](docs/architecture.md)
+- [Phased delivery roadmap](docs/roadmap.md)
+
 ## Quick Start
 
 ```bash
