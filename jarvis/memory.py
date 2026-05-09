@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from typing import Sequence
 
 
 @dataclass(frozen=True)
@@ -15,8 +16,8 @@ class MemoryStore:
     def __init__(self) -> None:
         self._entries: list[MemoryEntry] = []
 
-    def add(self, text: str, tags: list[str] | None = None) -> MemoryEntry:
-        entry = MemoryEntry(text=text, tags=tuple(tags or []))
+    def add(self, text: str, tags: Sequence[str] | None = None) -> MemoryEntry:
+        entry = MemoryEntry(text=text, tags=tuple(tags or ()))
         self._entries.append(entry)
         return entry
 

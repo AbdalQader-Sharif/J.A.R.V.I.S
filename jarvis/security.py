@@ -16,7 +16,6 @@ class CommandPolicy:
     allowed_prefixes: tuple[str, ...] = (
         "echo",
         "python --version",
-        "ls",
         "pwd",
         "date",
     )
