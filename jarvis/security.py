@@ -49,16 +49,24 @@ class CommandExecutor:
 
     def run(self, command: str, timeout_seconds: int = 10) -> CommandResult:
         self.validate(command)
-        process = subprocess.run(
-            shlex.split(command),
-            capture_output=True,
-            text=True,
-            timeout=timeout_seconds,
-            check=False,
-        )
-        return CommandResult(
-            command=command,
-            returncode=process.returncode,
-            stdout=process.stdout,
-            stderr=process.stderr,
-        )
+        try:
+            process = subprocess.run(
+                shlex.split(command),
+                capture_output=True,
+                text=True,
+                timeout=timeout_seconds,
+                check=False,
+            )
+            return CommandResult(
+                command=command,
+                returncode=process.returncode,
+                stdout=process.stdout,
+                stderr=process.stderr,
+            )
+        except subprocess.TimeoutExpired:
+            return CommandResult(
+                command=command,
+                returncode=124,
+                stdout="",
+                stderr=f"Command timed out after {timeout_seconds}s.",
+            )

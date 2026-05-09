@@ -30,4 +30,10 @@ class MemoryStore:
             in_tags = any(needle in tag.lower() for tag in entry.tags)
             return in_text or in_tags
 
-        return [entry for entry in self._entries if matches(entry)][:limit]
+        results: list[MemoryEntry] = []
+        for entry in self._entries:
+            if matches(entry):
+                results.append(entry)
+                if len(results) >= limit:
+                    break
+        return results

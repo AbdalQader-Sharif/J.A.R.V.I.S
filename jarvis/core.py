@@ -23,7 +23,20 @@ class JarvisCore:
         self.event_bus.publish(event)
         self.memory.add(f"event:{event.name}", tags=[event.source])
         actions = self.automation.resolve_actions(event)
-        return [self.commands.run(command) for command in actions]
+        outputs: list[CommandResult] = []
+        for command in actions:
+            try:
+                outputs.append(self.commands.run(command))
+            except Exception as error:
+                outputs.append(
+                    CommandResult(
+                        command=command,
+                        returncode=1,
+                        stdout="",
+                        stderr=str(error),
+                    )
+                )
+        return outputs
 
     def execute_command(self, command: str) -> CommandResult:
         result = self.commands.run(command)

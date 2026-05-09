@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import logging
 from threading import Lock
 from typing import Callable
 
 from .models import Event
 
 EventHandler = Callable[[Event], None]
+LOGGER = logging.getLogger(__name__)
 
 
 class EventBus:
@@ -22,4 +24,7 @@ class EventBus:
         with self._lock:
             handlers = list(self._handlers.get(event.name, ()))
         for handler in handlers:
-            handler(event)
+            try:
+                handler(event)
+            except Exception:
+                LOGGER.exception("Event handler failed for event '%s'.", event.name)

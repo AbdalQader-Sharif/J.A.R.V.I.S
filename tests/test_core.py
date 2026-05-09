@@ -18,6 +18,21 @@ class CommandExecutorTests(unittest.TestCase):
 
 
 class JarvisCoreTests(unittest.TestCase):
+    def test_event_bus_continues_when_handler_raises(self) -> None:
+        core = JarvisCore()
+        seen: list[str] = []
+
+        def bad_handler(_event: Event) -> None:
+            raise RuntimeError("boom")
+
+        def good_handler(_event: Event) -> None:
+            seen.append("ok")
+
+        core.event_bus.subscribe("presence", bad_handler)
+        core.event_bus.subscribe("presence", good_handler)
+        core.publish_event(Event(name="presence", source="vision"))
+        self.assertEqual(seen, ["ok"])
+
     def test_event_triggers_automation_action(self) -> None:
         core = JarvisCore()
         core.add_automation_rule(
@@ -32,11 +47,26 @@ class JarvisCoreTests(unittest.TestCase):
         self.assertEqual(len(outputs), 1)
         self.assertIn("lights_on", outputs[0].stdout)
 
+    def test_event_automation_collects_failures_without_stopping(self) -> None:
+        core = JarvisCore()
+        core.add_automation_rule(
+            AutomationRule(name="bad", event_name="double_clap", action_command="rm -rf /")
+        )
+        core.add_automation_rule(
+            AutomationRule(name="good", event_name="double_clap", action_command="echo safe")
+        )
+        outputs = core.publish_event(Event(name="double_clap", source="sound"))
+        self.assertEqual(len(outputs), 2)
+        self.assertEqual(outputs[0].returncode, 1)
+        self.assertIn("safe", outputs[1].stdout)
+
     def test_memory_search_finds_recorded_actions(self) -> None:
         core = JarvisCore()
         core.execute_command("echo status")
         matches = core.memory.search("status")
         self.assertEqual(len(matches), 1)
+        self.assertIn("cmd:echo status", matches[0].text)
+        self.assertIn("command", matches[0].tags)
 
 
 if __name__ == "__main__":
