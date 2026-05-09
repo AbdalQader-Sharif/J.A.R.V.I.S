@@ -104,7 +104,6 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Run Jarvis automation demos, commands, and events.",
     )
-    parser.set_defaults(handler=_run_demo)
     subparsers = parser.add_subparsers(dest="command")
 
     demo = subparsers.add_parser("demo", help="Run the built-in automation demo.")
@@ -167,13 +166,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    if argv is None:
+        argv = sys.argv[1:]
+    if not argv:
+        argv = ["demo"]
     parser = build_parser()
-    args = parser.parse_args(argv)
-    if getattr(args, "command", None) is None:
-        for key, value in DEMO_DEFAULTS.items():
-            if not hasattr(args, key):
-                setattr(args, key, value)
-        return _run_demo(args)
+    args = parser.parse_args(list(argv))
     return args.handler(args)
 
 
