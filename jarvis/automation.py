@@ -8,6 +8,8 @@ class AutomationEngine:
         self._rules: dict[str, AutomationRule] = {}
 
     def add_rule(self, rule: AutomationRule) -> None:
+        if rule.name in self._rules:
+            raise ValueError(f"Rule '{rule.name}' already exists.")
         self._rules[rule.name] = rule
 
     def list_rules(self) -> list[AutomationRule]:

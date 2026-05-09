@@ -32,7 +32,7 @@ class MemoryStore:
             return in_text or in_tags
 
         results: list[MemoryEntry] = []
-        for entry in self._entries:
+        for entry in reversed(self._entries):
             if matches(entry):
                 results.append(entry)
                 if len(results) >= limit:

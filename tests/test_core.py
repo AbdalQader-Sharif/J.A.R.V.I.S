@@ -18,6 +18,13 @@ class CommandExecutorTests(unittest.TestCase):
 
 
 class JarvisCoreTests(unittest.TestCase):
+    def test_duplicate_rule_name_is_rejected(self) -> None:
+        core = JarvisCore()
+        rule = AutomationRule(name="same", event_name="double_clap", action_command="echo 1")
+        core.add_automation_rule(rule)
+        with self.assertRaises(ValueError):
+            core.add_automation_rule(rule)
+
     def test_event_bus_continues_when_handler_raises(self) -> None:
         core = JarvisCore()
         seen: list[str] = []
