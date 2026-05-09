@@ -10,6 +10,15 @@ from .models import AutomationRule, CommandResult, Event
 from .security import UnsafeCommandError
 
 
+DEMO_DEFAULTS = {
+    "event_name": "double_clap",
+    "event_source": "cli",
+    "rule_name": "demo-rule",
+    "action_command": "echo lights_on",
+    "payload": {},
+}
+
+
 def _parse_payload(raw: str) -> dict[str, Any]:
     if not raw:
         return {}
@@ -92,24 +101,17 @@ def _run_event(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run the J.A.R.V.I.S. core demo and commands.",
+        description="Run the Jarvis core demo and commands.",
     )
-    parser.set_defaults(
-        handler=_run_demo,
-        event_name="double_clap",
-        event_source="cli",
-        rule_name="demo-rule",
-        action_command="echo lights_on",
-        payload={},
-    )
+    parser.set_defaults(handler=_run_demo, **DEMO_DEFAULTS)
     subparsers = parser.add_subparsers(dest="command")
 
     demo = subparsers.add_parser("demo", help="Run the built-in automation demo.")
-    demo.add_argument("--event-name", default="double_clap")
-    demo.add_argument("--event-source", default="cli")
-    demo.add_argument("--rule-name", default="demo-rule")
-    demo.add_argument("--action-command", default="echo lights_on")
-    demo.add_argument("--payload", type=_parse_payload, default={})
+    demo.add_argument("--event-name", default=DEMO_DEFAULTS["event_name"])
+    demo.add_argument("--event-source", default=DEMO_DEFAULTS["event_source"])
+    demo.add_argument("--rule-name", default=DEMO_DEFAULTS["rule_name"])
+    demo.add_argument("--action-command", default=DEMO_DEFAULTS["action_command"])
+    demo.add_argument("--payload", type=_parse_payload, default=DEMO_DEFAULTS["payload"])
     demo.set_defaults(handler=_run_demo)
 
     run_command = subparsers.add_parser("command", help="Run a command via policy.")
