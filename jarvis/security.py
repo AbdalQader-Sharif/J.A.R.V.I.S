@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shlex
 import subprocess
 from dataclasses import dataclass
@@ -22,6 +23,7 @@ class CommandPolicy:
     forbidden_tokens: tuple[str, ...] = (
         "&&",
         "||",
+        "&",
         "|",
         ";",
         "`",
@@ -48,13 +50,16 @@ class CommandExecutor:
 
     def run(self, command: str, timeout_seconds: int = 10) -> CommandResult:
         self.validate(command)
+        use_shell = os.name == "nt"
+        args: str | list[str] = command if use_shell else shlex.split(command)
         try:
             process = subprocess.run(
-                shlex.split(command),
+                args,
                 capture_output=True,
                 text=True,
                 timeout=timeout_seconds,
                 check=False,
+                shell=use_shell,
             )
             return CommandResult(
                 command=command,
