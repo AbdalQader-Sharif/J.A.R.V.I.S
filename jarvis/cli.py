@@ -101,17 +101,17 @@ def _run_event(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run the Jarvis core demo and commands.",
+        description="Run Jarvis automation demos, commands, and events.",
     )
     parser.set_defaults(handler=_run_demo, **DEMO_DEFAULTS)
     subparsers = parser.add_subparsers(dest="command")
 
     demo = subparsers.add_parser("demo", help="Run the built-in automation demo.")
-    demo.add_argument("--event-name", default=DEMO_DEFAULTS["event_name"])
-    demo.add_argument("--event-source", default=DEMO_DEFAULTS["event_source"])
-    demo.add_argument("--rule-name", default=DEMO_DEFAULTS["rule_name"])
-    demo.add_argument("--action-command", default=DEMO_DEFAULTS["action_command"])
-    demo.add_argument("--payload", type=_parse_payload, default=DEMO_DEFAULTS["payload"])
+    demo.add_argument("--event-name", default=argparse.SUPPRESS)
+    demo.add_argument("--event-source", default=argparse.SUPPRESS)
+    demo.add_argument("--rule-name", default=argparse.SUPPRESS)
+    demo.add_argument("--action-command", default=argparse.SUPPRESS)
+    demo.add_argument("--payload", type=_parse_payload, default=argparse.SUPPRESS)
     demo.set_defaults(handler=_run_demo)
 
     run_command = subparsers.add_parser("command", help="Run a command via policy.")
