@@ -33,6 +33,20 @@ This repository is now structured to grow into a production J.A.R.V.I.S. system 
 python -m unittest discover -v
 ```
 
+## Run the App (CLI)
+
+```bash
+python -m jarvis
+```
+
+Common commands:
+
+```bash
+python -m jarvis demo
+python -m jarvis command echo hello
+python -m jarvis event --event-name double_clap --event-source cli --action-command "echo lights_on"
+```
+
 ## Example Usage
 
 ```python
