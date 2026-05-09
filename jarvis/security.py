@@ -4,7 +4,7 @@ import os
 import shlex
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from dataclasses import dataclass
 
 from .models import CommandResult
@@ -82,7 +82,7 @@ class CommandExecutor:
                 stderr="",
             )
         if action == "date" and len(tokens) == 1:
-            now = datetime.now().isoformat()
+            now = datetime.now(timezone.utc).isoformat()
             return CommandResult(
                 command=command,
                 returncode=0,
