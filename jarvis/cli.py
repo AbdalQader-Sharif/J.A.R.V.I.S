@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import sys
 from typing import Any, Sequence
 
@@ -65,7 +66,7 @@ def _run_demo(args: argparse.Namespace) -> int:
 
 
 def _run_command(args: argparse.Namespace) -> int:
-    command = " ".join(args.command).strip()
+    command = shlex.join(args.command).strip()
     if not command:
         print("Command cannot be empty.", file=sys.stderr)
         return 2
@@ -139,7 +140,7 @@ def build_parser() -> argparse.ArgumentParser:
     run_command.add_argument(
         "command",
         nargs=argparse.REMAINDER,
-        help="Command to run (allowed: echo, pwd, date, python --version).",
+        help="Command to run (subject to the security policy).",
     )
     run_command.set_defaults(handler=_run_command)
 
