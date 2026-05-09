@@ -36,7 +36,7 @@ python -m unittest discover -v
 ## Run the App (CLI)
 
 ```bash
-python -m jarvis
+python -m jarvis --help
 ```
 
 Common commands:
