@@ -104,34 +104,34 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Run Jarvis automation demos, commands, and events.",
     )
-    parser.set_defaults(handler=_run_demo, **DEMO_DEFAULTS)
+    parser.set_defaults(handler=_run_demo)
     subparsers = parser.add_subparsers(dest="command")
 
     demo = subparsers.add_parser("demo", help="Run the built-in automation demo.")
     demo.add_argument(
         "--event-name",
-        default=argparse.SUPPRESS,
+        default=DEMO_DEFAULTS["event_name"],
         help="Event name to publish.",
     )
     demo.add_argument(
         "--event-source",
-        default=argparse.SUPPRESS,
+        default=DEMO_DEFAULTS["event_source"],
         help="Source label for the event.",
     )
     demo.add_argument(
         "--rule-name",
-        default=argparse.SUPPRESS,
+        default=DEMO_DEFAULTS["rule_name"],
         help="Automation rule name to register.",
     )
     demo.add_argument(
         "--action-command",
-        default=argparse.SUPPRESS,
+        default=DEMO_DEFAULTS["action_command"],
         help="Command to execute when the demo event matches.",
     )
     demo.add_argument(
         "--payload",
         type=_parse_payload,
-        default=argparse.SUPPRESS,
+        default=DEMO_DEFAULTS["payload"],
         help="Optional JSON object payload.",
     )
     demo.set_defaults(handler=_run_demo)
@@ -169,6 +169,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if getattr(args, "command", None) is None:
+        for key, value in DEMO_DEFAULTS.items():
+            if not hasattr(args, key):
+                setattr(args, key, value)
+        return _run_demo(args)
     return args.handler(args)
 
 
